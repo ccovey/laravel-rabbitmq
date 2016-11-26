@@ -73,6 +73,7 @@ class RabbitMqJob extends Job implements JobContract
 
     public function release($delay = 0)
     {
+        parent::release($delay);
         $body = $this->message->getBody();
 
         if ($delay > 0) {
