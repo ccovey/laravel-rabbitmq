@@ -1,0 +1,25 @@
+{
+    "name": "ccovey/laravel-rabbitmq",
+    "description": "Laravel RabbitMQ implementation",
+    "minimum-stability": "dev",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Cody Covey",
+            "email": "ccovey14@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.0.0",
+        "ccovey/rabbitmq": "*",
+        "illuminate/queue": "~5.2.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~5.6.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Ccovey\\LaravelRabbitMQ\\": "src"
+        }
+    }
+}
