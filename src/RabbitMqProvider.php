@@ -15,7 +15,7 @@ class RabbitMqProvider extends ServiceProvider
     public function register()
     {
         $rabbitMqConfig = $this->app['config']['queue.connections.rabbitmq'];
-        $this->app->singleton(Connection::class, function (Application $app) use ($rabbitMqConfig) {
+        $this->app->singleton(Connection::class, function(Application $app) use ($rabbitMqConfig) {
             $params = new ConnectionParameters(
                 $rabbitMqConfig['host'],
                 $rabbitMqConfig['port'],
@@ -34,18 +34,18 @@ class RabbitMqProvider extends ServiceProvider
             return new Connection($params);
         });
 
-        $this->app->singleton(Consumer::class, function (Application $app) {
+        $this->app->singleton(Consumer::class, function(Application $app) {
             return new Consumer($app[Connection::class]);
         });
 
-        $this->app->singleton(Producer::class, function (Application $app) {
+        $this->app->singleton(Producer::class, function(Application $app) {
             return new Producer($app[Connection::class]);
         });
 
         /** @var QueueManager $queueManager */
         $queueManager = $this->app['queue'];
 
-        $queueManager->addConnector('rabbitmq', function () {
+        $queueManager->addConnector('rabbitmq', function() {
             return new RabbitMQConnector($this->app[Consumer::class], $this->app[Producer::class], $this->app['config']);
         });
     }
