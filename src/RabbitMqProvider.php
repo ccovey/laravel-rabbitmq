@@ -18,7 +18,7 @@ class RabbitMqProvider extends ServiceProvider
         $this->app->singleton(Connection::class, function(Application $app) use ($rabbitMqConfig) {
             $params = new ConnectionParameters(
                 $rabbitMqConfig['host'],
-                $rabbitMqConfig['port'],
+                $rabbitMqConfig['port'] ?? ConnectionParameters::DEFAULT_PORT,
                 $rabbitMqConfig['user'] ?? ConnectionParameters::DEFAULT_USER,
                 $rabbitMqConfig['password'] ?? ConnectionParameters::DEFAULT_PASSWORD,
                 $rabbitMqConfig['vhost'] ?? '/',
