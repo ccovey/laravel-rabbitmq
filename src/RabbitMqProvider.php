@@ -24,6 +24,7 @@ class RabbitMqProvider extends ServiceProvider
                 $rabbitMqConfig['vhost'] ?? '/',
                 $rabbitMqConfig['insist'] ?? false,
                 $rabbitMqConfig['loginMethod'] ?? ConnectionParameters::LOGIN_METHOD,
+                $rabbitMqConfig['loginResponse'] ?? null,
                 $rabbitMqConfig['locale'] ?? ConnectionParameters::LOCALE,
                 $rabbitMqConfig['connectionTimeout'] ?? ConnectionParameters::CONNECTION_TIMEOUT,
                 $rabbitMqConfig['readWriteTimeout'] ?? ConnectionParameters::READ_WRITE_TIMEOUT,
@@ -42,11 +43,11 @@ class RabbitMqProvider extends ServiceProvider
             return new Producer($app[Connection::class]);
         });
 
-        /** @var QueueManager $queueManager */
-        $queueManager = $this->app['queue'];
-
-        $queueManager->addConnector('rabbitmq', function() {
-            return new RabbitMQConnector($this->app[Consumer::class], $this->app[Producer::class], $this->app['config']);
+        $this->app->booted(function () use ($rabbitMqConfig) {
+            $queueManager = $this->app[QueueManager::class];
+            $queueManager->addConnector('rabbitmq', function() use ($rabbitMqConfig) {
+                return new RabbitMQConnector($this->app[Consumer::class], $this->app[Producer::class], $rabbitMqConfig);
+            });
         });
     }
 }

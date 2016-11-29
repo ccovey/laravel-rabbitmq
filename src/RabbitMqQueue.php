@@ -100,4 +100,16 @@ class RabbitMqQueue extends Queue implements QueueContract
 
         return new RabbitMqJob($this->container, $this->producer, $message);
     }
+
+    /**
+     * Get the size of the queue.
+     *
+     * @param  string $queue
+     *
+     * @return int
+     */
+    public function size($queue = null)
+    {
+        return $this->consumer->getSize($queue);
+    }
 }
