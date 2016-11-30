@@ -2,6 +2,7 @@
 
 namespace Ccovey\LaravelRabbitMQ;
 
+use Ccovey\RabbitMQ\Config\QueueConfig;
 use Ccovey\RabbitMQ\Connection\Connection;
 use Ccovey\RabbitMQ\Connection\ConnectionParameters;
 use Ccovey\RabbitMQ\Consumer\Consumer;
@@ -37,8 +38,12 @@ class RabbitMqProvider extends ServiceProvider
             return new Connection($params);
         });
 
+        $this->app->singleton(QueueConfig::class, function (Application $app) use ($rabbitMqConfig) {
+            return new QueueConfig($rabbitMqConfig['queue'] ?? []);
+        });
+
         $this->app->singleton(QueueDeclarer::class, function (Application $app) use ($rabbitMqConfig) {
-            return new QueueDeclarer($app[Connection::class], $rabbitMqConfig['queue'] ?? []);
+            return new QueueDeclarer($app[Connection::class], $app[QueueConfig::class]);
         });
 
         $this->app->singleton(Consumer::class, function(Application $app) {
