@@ -5,7 +5,9 @@ namespace Ccovey\LaravelRabbitMQ;
 use Ccovey\RabbitMQ\Connection\Connection;
 use Ccovey\RabbitMQ\Connection\ConnectionParameters;
 use Ccovey\RabbitMQ\Consumer\Consumer;
+use Ccovey\RabbitMQ\ExchangeDeclarer;
 use Ccovey\RabbitMQ\Producer\Producer;
+use Ccovey\RabbitMQ\QueueDeclarer;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Queue\QueueManager;
 use Illuminate\Support\ServiceProvider;
@@ -35,18 +37,25 @@ class RabbitMqProvider extends ServiceProvider
             return new Connection($params);
         });
 
+        $this->app->singleton(QueueDeclarer::class, function (Application $app) use ($rabbitMqConfig) {
+            return new QueueDeclarer($app[Connection::class], $rabbitMqConfig['queue'] ?? []);
+        });
+
         $this->app->singleton(Consumer::class, function(Application $app) {
-            return new Consumer($app[Connection::class]);
+            return new Consumer($app[Connection::class], $app[QueueDeclarer::class]);
         });
 
         $this->app->singleton(Producer::class, function(Application $app) {
-            return new Producer($app[Connection::class]);
+            return new Producer($app[Connection::class], $app[QueueDeclarer::class]);
         });
 
         $this->app->booted(function () use ($rabbitMqConfig) {
             $queueManager = $this->app[QueueManager::class];
             $queueManager->addConnector('rabbitmq', function() use ($rabbitMqConfig) {
-                return new RabbitMQConnector($this->app[Consumer::class], $this->app[Producer::class], $rabbitMqConfig);
+                return new RabbitMQConnector(
+                    $this->app[Consumer::class],
+                    $this->app[Producer::class],
+                    $rabbitMqConfig);
             });
         });
     }

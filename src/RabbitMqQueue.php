@@ -3,9 +3,9 @@
 namespace Ccovey\LaravelRabbitMQ;
 
 use Ccovey\RabbitMQ\Consumer\ConsumableParameters;
-use Ccovey\RabbitMQ\Consumer\Consumer;
+use Ccovey\RabbitMQ\Consumer\ConsumerInterface;
 use Ccovey\RabbitMQ\Producer\Message;
-use Ccovey\RabbitMQ\Producer\Producer;
+use Ccovey\RabbitMQ\Producer\ProducerInterface;
 use DateTime;
 use Illuminate\Queue\Queue;
 use Illuminate\Contracts\Queue\Queue as QueueContract;
@@ -13,12 +13,12 @@ use Illuminate\Contracts\Queue\Queue as QueueContract;
 class RabbitMqQueue extends Queue implements QueueContract
 {
     /**
-     * @var Consumer
+     * @var ConsumerInterface
      */
     private $consumer;
 
     /**
-     * @var Producer
+     * @var ProducerInterface
      */
     private $producer;
 
@@ -27,7 +27,11 @@ class RabbitMqQueue extends Queue implements QueueContract
      */
     private $config;
 
-    public function __construct(Consumer $consumer, Producer $producer, array $config)
+    public function __construct(
+        ConsumerInterface $consumer,
+        ProducerInterface $producer,
+        array $config
+    )
     {
         $this->consumer = $consumer;
         $this->producer = $producer;

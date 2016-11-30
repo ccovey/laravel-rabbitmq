@@ -28,7 +28,7 @@ class RabbitMqJob extends Job implements JobContract
      */
     private $message;
 
-    public function __construct(Container $container, Producer $producer, QueuedMessage $message)
+    public function __construct(Container $container, ProducerInterface $producer, QueuedMessage $message)
     {
         $this->container = $container;
         $this->producer = $producer;
