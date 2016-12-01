@@ -16,7 +16,7 @@ class RabbitMqJob extends Job implements JobContract
     /**
      * @var Container
      */
-    private $container;
+    protected $container;
 
     /**
      * @var ProducerInterface
@@ -36,23 +36,13 @@ class RabbitMqJob extends Job implements JobContract
     }
 
     /**
-     * Fire the job.
-     *
-     * @return void
-     */
-    public function fire()
-    {
-        $this->resolveAndFire($this->message->getBody());
-    }
-
-    /**
      * Get the number of times the job has been attempted.
      *
      * @return int
      */
     public function attempts()
     {
-        return 1;
+        return $this->message->attempts ?? 0;
     }
 
     /**
@@ -62,7 +52,7 @@ class RabbitMqJob extends Job implements JobContract
      */
     public function getRawBody()
     {
-        $this->message->getBody();
+        $this->message->getRawBody();
     }
 
     public function delete()

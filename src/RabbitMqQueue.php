@@ -67,7 +67,7 @@ class RabbitMqQueue extends Queue implements QueueContract
             $payload['scheduledAt'] = new DateTime(sprintf('+%s', $options['delay']));
         }
 
-        $message = new Message($payload, $queue);
+        $message = new Message(json_decode($payload), $queue);
         $this->producer->publish($message);
     }
 
