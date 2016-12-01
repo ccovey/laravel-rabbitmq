@@ -2,8 +2,8 @@
 
 namespace Ccovey\LaravelRabbitMQ;
 
+use Ccovey\RabbitMQ\Consumer\ConsumerInterface;
 use Ccovey\RabbitMQ\Producer\Message;
-use Ccovey\RabbitMQ\Producer\Producer;
 use Ccovey\RabbitMQ\Producer\ProducerInterface;
 use Ccovey\RabbitMQ\QueuedMessage;
 use DateTime;
@@ -24,15 +24,22 @@ class RabbitMqJob extends Job implements JobContract
     private $producer;
 
     /**
+     * @var ConsumerInterface
+     */
+    private $consumer;
+
+    /**
      * @var QueuedMessage
      */
     private $message;
 
-    public function __construct(Container $container, ProducerInterface $producer, QueuedMessage $message)
+    public function __construct(Container $container, ProducerInterface $producer, ConsumerInterface $consumer, QueuedMessage $message)
     {
         $this->container = $container;
         $this->producer = $producer;
+        $this->consumer = $consumer;
         $this->message = $message;
+        $this->queue = $this->message->getQueueName();
     }
 
     /**
@@ -58,7 +65,7 @@ class RabbitMqJob extends Job implements JobContract
     public function delete()
     {
         parent::delete();
-        $this->producer->getChannel()->acknowledge($this->message->delivery_tag);
+        $this->consumer->getChannel()->acknowledge($this->message->getDeliveryTag());
     }
 
     public function release($delay = 0)
@@ -74,5 +81,6 @@ class RabbitMqJob extends Job implements JobContract
         $message = new Message($body, $this->message->getQueueName());
 
         $this->producer->publish($message);
+        $this->consumer->getChannel()->acknowledge($this->message->getDeliveryTag());
     }
 }

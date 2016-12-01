@@ -102,7 +102,7 @@ class RabbitMqQueue extends Queue implements QueueContract
             return null;
         }
 
-        return new RabbitMqJob($this->container, $this->producer, $message);
+        return new RabbitMqJob($this->container, $this->producer, $this->consumer, $message);
     }
 
     /**

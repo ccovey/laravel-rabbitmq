@@ -6,7 +6,6 @@ use Ccovey\RabbitMQ\Config\QueueConfig;
 use Ccovey\RabbitMQ\Connection\Connection;
 use Ccovey\RabbitMQ\Connection\ConnectionParameters;
 use Ccovey\RabbitMQ\Consumer\Consumer;
-use Ccovey\RabbitMQ\ExchangeDeclarer;
 use Ccovey\RabbitMQ\Producer\Producer;
 use Ccovey\RabbitMQ\QueueDeclarer;
 use Illuminate\Contracts\Foundation\Application;
