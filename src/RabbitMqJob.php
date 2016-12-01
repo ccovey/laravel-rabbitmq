@@ -59,7 +59,7 @@ class RabbitMqJob extends Job implements JobContract
      */
     public function getRawBody()
     {
-        $this->message->getRawBody();
+        return $this->message->getRawBody();
     }
 
     public function delete()

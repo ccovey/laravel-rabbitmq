@@ -49,7 +49,7 @@ class RabbitMqQueue extends Queue implements QueueContract
      */
     public function push($job, $data = '', $queue = null)
     {
-        $this->pushRaw($this->createPayload($job, $data), $queue);
+        $this->pushRaw($this->createPayload($job, $data), $this->getQueueName($queue));
     }
 
     /**
@@ -67,7 +67,7 @@ class RabbitMqQueue extends Queue implements QueueContract
             $payload['scheduledAt'] = new DateTime(sprintf('+%s', $options['delay']));
         }
 
-        $message = new Message(json_decode($payload), $queue);
+        $message = new Message(json_decode($payload, 1), $this->getQueueName($queue));
         $this->producer->publish($message);
     }
 
@@ -83,7 +83,7 @@ class RabbitMqQueue extends Queue implements QueueContract
      */
     public function later($delay, $job, $data = '', $queue = null)
     {
-        $this->pushRaw($this->createPayload($job, $data), $queue, ['delay' => $delay]);
+        $this->pushRaw($this->createPayload($job, $data), $this->getQueueName($queue), ['delay' => $delay]);
     }
 
     /**
@@ -95,7 +95,7 @@ class RabbitMqQueue extends Queue implements QueueContract
      */
     public function pop($queue = null)
     {
-        $params = new ConsumableParameters($queue);
+        $params = new ConsumableParameters($this->getQueueName($queue));
         $message = $this->consumer->getMessage($params);
 
         if (!$message) {
@@ -114,6 +114,11 @@ class RabbitMqQueue extends Queue implements QueueContract
      */
     public function size($queue = null)
     {
-        return $this->consumer->getSize($queue);
+        return $this->consumer->getSize($this->getQueueName($queue));
+    }
+
+    private function getQueueName($queue)
+    {
+        return $queue ?: 'queueName';
     }
 }
